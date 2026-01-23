@@ -4,7 +4,6 @@ import models, database, auth_logic
 
 app = FastAPI()
 
-# Kreiranje tablica u bazi
 models.Base.metadata.create_all(bind=database.engine)
 
 def get_db():
@@ -42,4 +41,5 @@ def login(username: str, password: str, otp_code: str, db: Session = Depends(get
     if not auth_logic.verify_otp(user.mfa_secret, otp_code):
         raise HTTPException(status_code=401, detail="Pogrešan OTP kod")
     
+
     return {"msg": "Uspješna prijava! Dobrodošli."}
