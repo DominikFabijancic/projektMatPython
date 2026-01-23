@@ -3,11 +3,9 @@ import requests
 import qrcode
 from io import BytesIO
 
-# Naslov aplikacije
 st.set_page_config(page_title="MFA Sigurni Login", page_icon="🔐")
-st.title("🔐 Sustav s Dvostrukom Autentifikacijom (MFA)")
+st.title("Sustav s Dvostrukom Autentifikacijom (MFA)")
 
-# URL tvog FastAPI servera
 API_URL = "http://127.0.0.1:8000"
 
 menu = ["Prijava", "Registracija"]
@@ -19,7 +17,6 @@ if choice == "Registracija":
     new_pass = st.text_input("Lozinka", type='password')
 
     if st.button("Registriraj me"):
-        # Šaljemo podatke u FastAPI backend
         response = requests.post(f"{API_URL}/register?username={new_user}&password={new_pass}")
         
         if response.status_code == 200:
@@ -28,12 +25,9 @@ if choice == "Registracija":
             st.write("### Vaš MFA Tajni Ključ:")
             st.code(data['mfa_secret'])
             
-            # Generiranje QR koda za Google Authenticator
-            # Format: otpauth://totp/ImeAplikacije:Korisnik?secret=TAJNA&issuer=ImeAplikacije
             otp_uri = f"otpauth://totp/MojProjekt:{new_user}?secret={data['mfa_secret']}&issuer=MojProjekt"
             img = qrcode.make(otp_uri)
             
-            # Prikaz QR koda na stranici
             buf = BytesIO()
             img.save(buf, format="PNG")
             st.image(buf.getvalue(), caption="Skenirajte ovaj kod aplikacijom Google Authenticator")
@@ -47,11 +41,11 @@ elif choice == "Prijava":
     otp = st.text_input("6-znamenkasti OTP kod s mobitela", help="Unesite kod iz svoje Authenticator aplikacije")
 
     if st.button("Prijavi se"):
-        # Šaljemo login zahtjev u FastAPI
         response = requests.post(f"{API_URL}/login?username={user}&password={password}&otp_code={otp}")
         
         if response.status_code == 200:
             st.balloons() # Mala animacija za uspjeh
             st.success(f"Dobrodošli natrag, {user}! Pristup je odobren.")
         else:
+
             st.error("Neuspješna prijava. Provjerite podatke ili OTP kod.")
