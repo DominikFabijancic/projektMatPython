@@ -44,8 +44,9 @@ elif choice == "Prijava":
         response = requests.post(f"{API_URL}/login?username={user}&password={password}&otp_code={otp}")
         
         if response.status_code == 200:
-            st.balloons() # Mala animacija za uspjeh
+            st.balloons() 
             st.success(f"Dobrodošli natrag, {user}! Pristup je odobren.")
         else:
 
             st.error("Neuspješna prijava. Provjerite podatke ili OTP kod.")
+
